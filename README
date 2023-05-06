@@ -1,0 +1,1 @@
+python tidal_generator.py --days 730 --file tidal_data.csv --start_date 2023-05-05 --lat 37.7749 --lon -122.4194
