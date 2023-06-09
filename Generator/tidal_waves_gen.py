@@ -32,6 +32,35 @@ class Generator:
 
         return tidal_data
 
+    def get_tidal_data_separate(self, start_date, num_days):
+        tidal_data = {"moon": [], "sun": []}
+
+        for day_offset in range(num_days):
+            date = start_date + datetime.timedelta(days=day_offset)
+
+            self.observer.date = date.strftime('%Y/%m/%d %H:%M:%S')
+
+            moon = ephem.Moon(self.observer)
+            sun = ephem.Sun(self.observer)
+
+            moon_altitude = math.degrees(moon.alt)
+            sun_altitude = math.degrees(sun.alt)
+
+            tidal_data["moon"].append((date, moon_altitude))
+            tidal_data["sun"].append((date, sun_altitude))
+
+        return tidal_data
+
+    @staticmethod
+    def save_tidal_data_separate_to_csv(tidal_data, filename):
+        for celestial_body, data in tidal_data.items():
+            with open(f"{celestial_body}_{filename}", 'w', newline='') as csvfile:
+                csv_writer = csv.writer(csvfile)
+                csv_writer.writerow(['Date', 'Tidal Force'])
+
+                for date, tidal_force in data:
+                    csv_writer.writerow([date, tidal_force])
+                    
     @staticmethod
     def save_tidal_data_to_csv(tidal_data, filename):
         with open(filename, 'w', newline='') as csvfile:
